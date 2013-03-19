@@ -7,6 +7,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns(
     '',
 
+    url(r'^out/(?P<link_id>\d+)/$', 'apps.links.views.click_link'),
     url(r'^(?P<tag>[^/]+)/(?:(?P<action>m|more|e|edit)/)?$', 'apps.links.views.link'),
     url(r'^(?P<tag>[^/]+)/(?:(?P<action>m|more|e|edit)/)?$', 'apps.links.views.link'),
     url(r'^(?P<tag>[^/]+)/(?P<filter>[^/]+)/(?:(?P<action>m|more|e|edit)/)?$',

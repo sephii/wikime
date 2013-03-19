@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}Wikime{% endblock %}</title>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/foundation.min.css"/>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/app.css"/>
+    </head>
+    <body>
+        <div class="row">
+            <div class="twelve columns">
+                <div id="content">{% block content %}{% endblock %}</div>
+            </div>
+    </body>
+</html>

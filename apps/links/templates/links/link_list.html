@@ -1,5 +1,19 @@
-<ul>
+{% extends "base.html" %}
+{% load links_extras %}
+
+{% block content %}
 {% for link in links %}
-    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+<div class="link">
+    <div class="alert-box" style="opacity: {% link_opacity link %}">
+        <div class="title">
+            <h4><a href="{{ link.url }}">{{ link.title }}</a></h4>
+        </div>
+    </div>
+    {% if link.is_droppable %}
+        <div class="delete">
+            <a style="opacity: 1" class="round alert button" href="">Drop</a>
+        </div>
+    {% endif %}
+</div>
 {% endfor %}
-</ul>
+{% endblock %}

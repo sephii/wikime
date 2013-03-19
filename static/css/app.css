@@ -1,0 +1,27 @@
+div.link {
+    position: relative;
+}
+
+div.link div.delete {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    opacity: 0.6;
+}
+
+div.alert-box h4, div.alert-box h4 a {
+    color: #FFF;
+}
+
+div.alert-box div.delete {
+    text-align: right;
+}
+
+div.alert-box div.delete a {
+    margin-top: 5px;
+}
+
+body {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
