@@ -12,9 +12,13 @@ div.karma small {
 
 div.link div.delete {
     position: absolute;
-    right: 30px;
+    right: 5px;
     top: 10px;
     opacity: 0.6;
+}
+
+div.link div.delete a {
+    padding: 5px 10px;
 }
 
 div.link div.karma {
@@ -32,10 +36,6 @@ div.alert-box h5, div.alert-box h5 a {
 
 div.alert-box div.delete {
     text-align: right;
-}
-
-div.alert-box div.delete a {
-    margin-top: 5px;
 }
 
 body {

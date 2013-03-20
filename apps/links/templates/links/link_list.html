@@ -43,7 +43,7 @@
     </div>
     {% if link.is_droppable %}
         <div class="delete">
-            <a class="alert button" href="">Drop</a>
+            <a class="alert button" href="">Drop<br/><small>(last accessed {{ link.last_access|timesince }} ago)</small></a>
         </div>
     {% endif %}
 </div>
