@@ -15,36 +15,41 @@ function sameOrigin(url) {
         // or any other URL that isn't scheme relative or absolute i.e relative.
         !(/^(\/\/|http:|https:).*/.test(url));
 }
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
         }
     }
 });
 
 $(function() {
-    $('div.link a').click(function() {
-        $.post('/out/', {
-            'id': $(this).attr('data-id')
-        }, function(data) { console.log(data) });
+    $('div.link div.title a').click(function() {
+        var link_id = $(this).parents('div.link:first').attr('data-id');
+
+        if($.cookie('last_link') != link_id) {
+            $.cookie('last_link', link_id);
+            $.post('/w/out/', {
+                'id': link_id
+            });
+        }
 
         return true;
+    });
+
+    $('div.link div.delete a').click(function() {
+        var link_container = $(this).parents('div.link:first');
+        var link_id = link_container.attr('data-id');
+
+        $.post('/w/delete/', {
+            'id': link_id
+        }, function(data) {
+            link_container.fadeOut('slow', function() {
+                link_container.remove();
+            });
+        });
+
+        return false;
     });
 });

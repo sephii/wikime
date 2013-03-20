@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+)
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.http import require_POST
@@ -40,7 +42,7 @@ def more_link(request, tag_name, filter=None):
             tag, created = Tag.objects.get_or_create(name=tag_name)
             tag.add_link(form.cleaned_data['url'])
 
-            return HttpResponseRedirect(link.url)
+            return HttpResponseRedirect(form.cleaned_data['url'])
     else:
         form = LinkForm()
 
@@ -66,5 +68,28 @@ def click_link(request):
     if link_id is not None:
         link = Link.objects.get(pk=link_id)
         link.hit()
+    else:
+        return HttpResponseNotFound()
+
+    return HttpResponse('')
+
+
+@require_POST
+def delete_link(request):
+    link_id = request.POST.get('id', None)
+
+    if link_id is not None:
+        try:
+            link = Link.objects.get(pk=link_id)
+        except Link.DoesNotExist:
+            return HttpResponseNotFound()
+
+        tag = link.tag
+        link.delete()
+
+        if len(tag.links.all()) == 0:
+            tag.delete()
+    else:
+        return HttpResponseNotFound()
 
     return HttpResponse('')

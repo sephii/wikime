@@ -28,7 +28,7 @@ class Tag(models.Model):
 
 class Link(models.Model):
     karma = models.IntegerField(default=0)
-    last_access = models.DateTimeField(null=True)
+    last_access = models.DateTimeField(auto_now_add=True, null=True)
     combo = models.PositiveSmallIntegerField(default=0)
     tag = models.ForeignKey(Tag, related_name='links')
     title = models.CharField(max_length=255)

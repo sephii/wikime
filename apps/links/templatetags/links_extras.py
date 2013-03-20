@@ -11,4 +11,4 @@ def link_opacity(link):
 
     opacity = 1 - (float(link.karma) / float(settings.KARMA_LIMITS[0]))
 
-    return max(round(opacity, 2), 0.1)
+    return max(round(opacity, 2), 0.15)

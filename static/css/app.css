@@ -6,15 +6,24 @@ div.add-link input {
     margin: 0;
 }
 
+div.karma small {
+    font-size: 80%;
+}
+
 div.link div.delete {
     position: absolute;
-    right: 10px;
+    right: 30px;
     top: 10px;
     opacity: 0.6;
 }
 
 div.link div.karma {
     text-align: center;
+}
+
+div.link div.karma h5 {
+    margin-top: 7px;
+    margin-bottom: 0;
 }
 
 div.alert-box h5, div.alert-box h5 a {
