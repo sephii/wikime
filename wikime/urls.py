@@ -7,10 +7,9 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns(
     '',
 
-    url(r'^out/(?P<link_id>\d+)/$', 'apps.links.views.click_link'),
-    url(r'^(?P<tag>[^/]+)/(?:(?P<action>m|more|e|edit)/)?$', 'apps.links.views.link'),
-    url(r'^(?P<tag>[^/]+)/(?:(?P<action>m|more|e|edit)/)?$', 'apps.links.views.link'),
-    url(r'^(?P<tag>[^/]+)/(?P<filter>[^/]+)/(?:(?P<action>m|more|e|edit)/)?$',
+    url(r'^out/$', 'apps.links.views.click_link'),
+    url(r'^(?P<tag_name>\w+)(?P<more>!)?/$', 'apps.links.views.link'),
+    url(r'^(?P<tag_name>\w+)(?P<more>!)?/(?P<filter>[^/]+)/$',
         'apps.links.views.link'),
 
     # Uncomment the admin/doc line below to enable admin documentation:

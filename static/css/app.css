@@ -2,6 +2,10 @@ div.link {
     position: relative;
 }
 
+div.add-link input {
+    margin: 0;
+}
+
 div.link div.delete {
     position: absolute;
     right: 10px;
@@ -9,7 +13,11 @@ div.link div.delete {
     opacity: 0.6;
 }
 
-div.alert-box h4, div.alert-box h4 a {
+div.link div.karma {
+    text-align: center;
+}
+
+div.alert-box h5, div.alert-box h5 a {
     color: #FFF;
 }
 
