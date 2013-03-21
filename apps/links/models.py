@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -11,10 +12,18 @@ class Tag(models.Model):
 
     def add_link(self, link_url):
             link_grabber = LinkGrabber(link_url)
-            bs = BeautifulSoup(link_grabber.get())
+            response = link_grabber.get()
 
             link = Link(tag=self, url=link_url)
-            link.title = bs.select('head title')[0].text
+
+            if response.headers['content-type'].startswith('text/html;'):
+                bs = BeautifulSoup(response.text)
+
+                link.title = bs.select('head title')[0].text
+            else:
+                parsed_url = urlparse(link_url)
+                link.title = os.path.basename(parsed_url.path)
+
             link.save()
 
     def get_links(self, filter=None):
@@ -97,4 +106,4 @@ class LinkGrabber(object):
         if self.auth is not None:
             self._authenticate()
 
-        return self.session.get(self.url).text
+        return self.session.get(self.url)
