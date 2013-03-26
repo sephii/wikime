@@ -10,19 +10,25 @@ from django.db import models
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    def add_link(self, link_url):
-            link_grabber = LinkGrabber(link_url)
-            response = link_grabber.get()
+    def __init__(self, name):
+        self.name = name
 
+    def add_link(self, link_url, link_title=None):
             link = Link(tag=self, url=link_url)
 
-            if response.headers['content-type'].startswith('text/html;'):
-                bs = BeautifulSoup(response.text)
-
-                link.title = bs.select('head title')[0].text
+            if link_title is not None:
+                link.title = link_title
             else:
-                parsed_url = urlparse(link_url)
-                link.title = os.path.basename(parsed_url.path)
+                link_grabber = LinkGrabber(link_url)
+                response = link_grabber.get()
+
+                if response.headers['content-type'].startswith('text/html;'):
+                    bs = BeautifulSoup(response.text)
+
+                    link.title = bs.select('head title')[0].text
+                else:
+                    parsed_url = urlparse(link_url)
+                    link.title = os.path.basename(parsed_url.path)
 
             link.save()
 
@@ -33,6 +39,24 @@ class Tag(models.Model):
             links = links.filter(title__icontains=filter)
 
         return links
+
+    def get_wiki_tagged_pages(self):
+        links_list = []
+
+        for url in settings.LINKS_TAGS_SYNC_URLS:
+            link_grabber = LinkGrabber(url % self.name)
+            response = link_grabber.get()
+
+            if (response.status_code == 200 and
+                    response.headers['content-type'].startswith('text/html;')):
+                bs = BeautifulSoup(response.text)
+                rows = bs.select('div.labels table.tableview tr td')
+
+                for row in rows:
+                    link = row.find('a')
+                    links_list.append((link['href'], link.text))
+
+        return links_list
 
 
 class Link(models.Model):
@@ -100,7 +124,7 @@ class LinkGrabber(object):
             'os_destination': '/homepage.action',
             'os_username': self.auth[0],
             'os_password': self.auth[1],
-        })
+        }, allow_redirects=False)
 
     def get(self):
         if self.auth is not None:

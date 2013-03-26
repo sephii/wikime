@@ -29,7 +29,16 @@ def link(request, tag_name, more='', filter=None):
 
             return HttpResponseRedirect(links[0].url)
     except Tag.DoesNotExist:
-        return more_link(request, tag_name, filter)
+        tag = Tag(name=tag_name)
+        links = tag.get_wiki_tagged_pages()
+
+        if links:
+            for link in links:
+                tag.add_link(link[0], link[1])
+
+            tag.save()
+        else:
+            return more_link(request, tag_name, filter)
 
     return more_link(request, tag_name, filter)
 

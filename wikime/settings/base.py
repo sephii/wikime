@@ -171,6 +171,11 @@ LINKS_ALLOWED_HOSTS = (
     'projects.liip.ch',
 )
 
+LINKS_TAGS_SYNC_URLS = (
+    'https://wiki.liip.ch/label/%s',
+    'https://projects.liip.ch/label/%s',
+)
+
 LINKS_CREDENTIALS = {
     'wiki.liip.ch': ('username', 'password'),
     'projects.liip.ch': ('username', 'password'),
