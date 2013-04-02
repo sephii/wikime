@@ -23,7 +23,7 @@ def link(request, tag_name, more='', filter=None):
         if filter is not None:
             links = links.filter(title__icontains=filter)
 
-        if len(links) > 0:
+        if len(links) == 1:
             links[0].last_access = datetime.now()
             links[0].save()
 
