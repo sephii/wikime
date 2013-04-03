@@ -33,12 +33,8 @@ def link(request, tag_name, more='', filter=None):
         links = tag.get_wiki_tagged_pages()
 
         if links:
-            for link in links:
-                tag.add_link(link[0], link[1])
-
-            tag.save()
-        else:
-            return more_link(request, tag_name, filter)
+            for url, title in links.iteritems():
+                tag.add_link(url, title)
 
     return more_link(request, tag_name, filter)
 

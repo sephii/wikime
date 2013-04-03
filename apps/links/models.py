@@ -8,30 +8,39 @@ from django.conf import settings
 from django.db import models
 
 
+def create_session_from_url(url):
+    parsed_url = urlparse(url)
+    hostname = parsed_url.hostname
+
+    assert hostname in settings.LINKS_WIKIS
+
+    return ConfluenceSession(hostname, settings.LINKS_WIKIS[hostname])
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    def __init__(self, name):
-        self.name = name
-
     def add_link(self, link_url, link_title=None):
-            link = Link(tag=self, url=link_url)
+        if not self.id:
+            self.save()
 
-            if link_title is not None:
-                link.title = link_title
+        link = Link(tag=self, url=link_url)
+
+        if link_title is not None:
+            link.title = link_title
+        else:
+            session = create_session_from_url(link_url)
+            page = session.get_page(link_url)
+
+            if page.headers['content-type'].startswith('text/html;'):
+                bs = BeautifulSoup(page.text)
+
+                link.title = bs.select('head title')[0].text
             else:
-                link_grabber = LinkGrabber(link_url)
-                response = link_grabber.get()
+                parsed_url = urlparse(link_url)
+                link.title = os.path.basename(parsed_url.path)
 
-                if response.headers['content-type'].startswith('text/html;'):
-                    bs = BeautifulSoup(response.text)
-
-                    link.title = bs.select('head title')[0].text
-                else:
-                    parsed_url = urlparse(link_url)
-                    link.title = os.path.basename(parsed_url.path)
-
-            link.save()
+        link.save()
 
     def get_links(self, filter=None):
         links = self.links.all()
@@ -42,22 +51,21 @@ class Tag(models.Model):
         return links
 
     def get_wiki_tagged_pages(self):
-        links_list = []
+        links = {}
 
-        for url in settings.LINKS_TAGS_SYNC_URLS:
-            link_grabber = LinkGrabber(url % self.name)
-            response = link_grabber.get()
+        for hostname, auth in settings.LINKS_WIKIS.iteritems():
+            pages = ConfluenceSession(hostname, auth).get_pages_with_tag(
+                self.name
+            )
 
-            if (response.status_code == 200 and
-                    response.headers['content-type'].startswith('text/html;')):
-                bs = BeautifulSoup(response.text)
-                rows = bs.select('div.labels table.tableview tr td')
+            for link, page in pages.iteritems():
+                absolute_link = 'https://{hostname}{link}'.format(
+                    hostname=hostname,
+                    link=link,
+                )
+                links[absolute_link] = page
 
-                for row in rows:
-                    link = row.find('a')
-                    links_list.append((link['href'], link.text))
-
-        return links_list
+        return links
 
 
 class Link(models.Model):
@@ -100,15 +108,3 @@ class Link(models.Model):
 
     def is_droppable(self):
         return self.karma <= settings.KARMA_LIMITS[0]
-
-
-class LinkGrabber(object):
-    def __init__(self, url):
-        if (not self.hostname or self.hostname not in
-                settings.LINKS_ALLOWED_HOSTS):
-            raise Exception("Host '%s' is not allowed'" % self.hostname)
-
-        self.session = ConfluenceSession(url)
-
-    def get(self):
-        self.page.get()

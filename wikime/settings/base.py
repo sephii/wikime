@@ -166,17 +166,7 @@ LOGGING = {
 
 }
 
-LINKS_ALLOWED_HOSTS = (
-    'wiki.liip.ch',
-    'projects.liip.ch',
-)
-
-LINKS_TAGS_SYNC_URLS = (
-    'https://wiki.liip.ch/label/%s',
-    'https://projects.liip.ch/label/%s',
-)
-
-LINKS_CREDENTIALS = {
+LINKS_WIKIS = {
     'wiki.liip.ch': ('username', 'password'),
     'projects.liip.ch': ('username', 'password'),
 }
